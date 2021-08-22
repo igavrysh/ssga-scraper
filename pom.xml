@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.orbis</groupId>
-	<artifactId>ssga-scrapper</artifactId>
+	<artifactId>ssga-scraper</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ssga-scraper</name>
 	<description>Demo project for Spring Boot</description>
@@ -45,6 +45,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+
 				<configuration>
 					<excludes>
 						<exclude>
