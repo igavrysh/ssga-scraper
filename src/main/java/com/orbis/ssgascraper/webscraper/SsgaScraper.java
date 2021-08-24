@@ -1,12 +1,20 @@
 package com.orbis.ssgascraper.webscraper;
 
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.orbis.ssgascraper.model.Fund;
 import com.orbis.ssgascraper.service.ServiceProvider;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.URL;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,18 +50,71 @@ public class SsgaScraper implements Scraper, Runnable {
     }
 
     /**
-     * Processes and extract the document using CSS query selectors
+     * Processes and extracts the document using CSS query selectors
      *
      * @param document: HTML document
      */
     private void processDocument(Document document) {
+        LOGGER.log(Level.INFO, "Started Processing SsgaScraper document");
+
+        // make this active as we are continuously scraping
+        scraperFundDataState.setIsActive(true);
+
+        try {
+            // iterate over the document
+            for (Element row : document.select("div.tb-body table tbody ")) {
+
+                // query selectors to scrape the data.
+                Element nameEl = row.select("tr:nth-of-type(1) td.fundName").first();
+                Element tickerEl = row.select("tr:nth-of-type(1) td.fundTicker").first();
+                Element domicileEl = row.select("tr:nth-of-type(1) td.domicile").first();
+
+                if (nameEl != null && tickerEl != null && domicileEl != null) {
+                    Fund fund = Fund.builder()
+                            .name(nameEl.text())
+                            .ticker(tickerEl.text())
+                            .domicile(domicileEl.text())
+                            .build();
+                    scraperFundDataState.getDataQueue().add(fund);
+                }
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "Error occurred while processing the document");
+        }
+
+        // reset the status to false in order to release the ScraperDataDispatcher thread
+        // which is used to insert data in the database.
+        scraperFundDataState.setIsActive(false);
+        LOGGER.log(Level.INFO, "Finished Processing SsgaScraper document.");
     }
 
     @Override
     public void startScraper() {
         try {
+            WebClient webClient = new WebClient();
+            webClient.getOptions().setJavaScriptEnabled(true);
+            webClient.getOptions().setCssEnabled(false);
+            webClient.getOptions().setUseInsecureSSL(true);
+            webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+            webClient.getCookieManager().setCookiesEnabled(true);
+            webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+            // Wait time
+            webClient.waitForBackgroundJavaScript(15000);
+            webClient.getOptions().setThrowExceptionOnScriptError(false);
+
+            URL url = new URL(ScraperInfo.SSGA.URL);
+            WebRequest requestSettings = new WebRequest(url, HttpMethod.GET);
+            HtmlPage page = webClient.getPage(requestSettings);
+            synchronized (page) {
+                try {
+                    page.wait(15000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
             // Jsoup is used to parse the HTML.
-            final Document document = Jsoup.connect(ScraperInfo.SSGA.URL).get();
+            final Document document = Jsoup.parse(page.asXml());
 
             // process document
             processDocument(document);

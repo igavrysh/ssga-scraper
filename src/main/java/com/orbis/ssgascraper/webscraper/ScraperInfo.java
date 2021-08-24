@@ -6,7 +6,7 @@ package com.orbis.ssgascraper.webscraper;
  */
 public enum ScraperInfo {
 
-    SSGA("https://www.ssga.com", "SSGA", 1);
+    SSGA("https://www.ssga.com/us/en/individual/etfs/fund-finder", "SSGA", 1);
 
     public final String URL;
 
