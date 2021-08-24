@@ -5,9 +5,11 @@ package com.orbis.ssgascraper.webscraper;
  * Scraper Engine directly iterates over the values of this enum.
  */
 public enum ScraperInfo {
-    SSGA("https://www.www.ssga.com", "SSGA", 1);
+
+    SSGA("https://www.ssga.com", "SSGA", 1);
 
     public final String URL;
+
     public final Integer ID;
 
     // website name

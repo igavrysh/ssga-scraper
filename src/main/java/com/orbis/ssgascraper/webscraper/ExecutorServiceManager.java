@@ -12,6 +12,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Executor service manager is use to manage the state, functionalities and handle exceptions.
+ * This also need as the executor service is used twice i.e. in ScraperEngine and ScraperDataDispatcher.
+ * This is prototype scope as it is used on two different places at the same time.
+ */
 @Getter
 @Setter
 @Component
@@ -19,9 +24,15 @@ public class ExecutorServiceManager {
 
     private final static Logger LOGGER = Logger.getLogger(String.valueOf(ExecutorServiceManager.class));
 
+    /**
+     * This will be used for CPU bound operations
+     *
+     * @param maxThreadCount: Max number of threads assigned to the pool.
+     * @return new executorService with fixed thread pool
+     */
     public ExecutorService getNewFixedThreadPool(int maxThreadCount, String executorServiceName) {
         try {
-            Executors.newFixedThreadPool(maxThreadCount);
+            return Executors.newFixedThreadPool(maxThreadCount);
         } catch (NumberFormatException ex) {
             LOGGER.log(Level.SEVERE,
                     String.format("Provided maxThreadCount [value=%s] is not an integer: %s ",
@@ -34,6 +45,12 @@ public class ExecutorServiceManager {
         return null;
     }
 
+    /**
+     * This is cached pool used for IO bound operation, threads are created by
+     * executor server as per our number of data in the queue.
+     *
+     * @return new executorService with fixed thread pool
+     */
     public ExecutorService getCachedThreadPool(String executorServiceName) {
         try {
             return Executors.newCachedThreadPool();
@@ -45,6 +62,11 @@ public class ExecutorServiceManager {
         return null;
     }
 
+    /**
+     * This function shutdown the executionService upon the tasks completion.
+     *
+     * @param futureList: takes the list of futures from the tasks getting executed.
+     */
     public void waitForTaskCompletion(List<Future<?>> futureList, ExecutorService executorService) {
         for (Future<?> future : futureList) {
             try {
@@ -55,6 +77,12 @@ public class ExecutorServiceManager {
         }
     }
 
+    /**
+     * Shutdown the service after sometime as this will not get automatically terminated.
+     *
+     * @param seconds:             wait for number of given seconds and then terminate
+     * @param executorServiceName: service name to check which if exceptions occurred.
+     */
     public void scheduleTermination(int seconds, String executorServiceName, ExecutorService executorService) {
         try {
             if (executorService.awaitTermination(seconds, TimeUnit.SECONDS)) {
