@@ -5,6 +5,7 @@ import com.orbis.ssgascraper.repository.FundRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @Service
@@ -25,8 +26,21 @@ public class FundServiceImpl implements FundService {
      * @param data: Takes fund object to add in the collection.
      */
     public void upsert(Object data) {
-        Fund fund = (Fund) data;;
+        Fund fund = (Fund) data;
 
+        if (fund.getTicker() == null) {
+            return;
+        }
+
+        Fund fundPersisted = fundRepo.findByTicker(fund.getTicker()).orElse(null);
+        if (fundPersisted == null) {
+            fundRepo.save(fund);
+        } else {
+            fundPersisted.setName(fund.getName());
+            fundPersisted.setDescription(fund.getDescription());
+            fundPersisted.setDomicile(fund.getDomicile());
+            fundRepo.save(fund);
+        }
 
         /*
         // find the event by title which will be unique

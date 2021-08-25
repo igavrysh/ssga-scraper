@@ -65,9 +65,9 @@ public class SsgaScraper implements Scraper, Runnable {
             for (Element row : document.select("div.tb-body table tbody ")) {
 
                 // query selectors to scrape the data.
-                Element nameEl = row.select("tr:nth-of-type(1) td.fundName").first();
-                Element tickerEl = row.select("tr:nth-of-type(1) td.fundTicker").first();
-                Element domicileEl = row.select("tr:nth-of-type(1) td.domicile").first();
+                Element nameEl = row.select("tr:nth-of-type(1) td.fundName a").first();
+                Element tickerEl = row.select("tr:nth-of-type(1) td.fundTicker a").first();
+                Element domicileEl = row.select("tr:nth-of-type(1) td.domicile div").first();
 
                 if (nameEl != null && tickerEl != null && domicileEl != null) {
                     Fund fund = Fund.builder()
@@ -76,6 +76,9 @@ public class SsgaScraper implements Scraper, Runnable {
                             .domicile(domicileEl.text())
                             .build();
                     scraperFundDataState.getDataQueue().add(fund);
+                } else {
+                    LOGGER.log(Level.SEVERE,
+                            String.format("SsgaScrapper failed to parse funds, name %s, ticker %s, domicile $s", nameEl, tickerEl, domicileEl));
                 }
             }
         } catch (Exception ex) {
