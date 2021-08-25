@@ -1,10 +1,10 @@
 package com.orbis.ssgascraper.webscraper;
 
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.machinepublishers.jbrowserdriver.JBrowserDriver;
+import com.machinepublishers.jbrowserdriver.Settings;
+import com.machinepublishers.jbrowserdriver.Timezone;
 import com.orbis.ssgascraper.model.Fund;
 import com.orbis.ssgascraper.service.ServiceProvider;
 import org.jsoup.Jsoup;
@@ -74,6 +74,7 @@ public class SsgaScraper implements Scraper, Runnable {
                             .name(nameEl.text())
                             .ticker(tickerEl.text())
                             .domicile(domicileEl.text())
+                            .link(nameEl.attr("href"))
                             .build();
                     scraperFundDataState.getDataQueue().add(fund);
                 } else {
@@ -93,13 +94,31 @@ public class SsgaScraper implements Scraper, Runnable {
 
     @Override
     public void startScraper() {
+        JBrowserDriver driver = new JBrowserDriver(Settings.builder().timezone(Timezone.UTC)
+                .maxConnections(200)
+                .socketTimeout(10000)
+                .connectionReqTimeout(10000)
+                .connectTimeout(10000).build());
         try {
-            WebClient webClient = new WebClient();
+            LOGGER.log(Level.INFO, "Driver creating successful");
+            driver.get(ScraperInfo.SSGA.URL);
+            String loadedPage = driver.getPageSource();
+            LOGGER.log(Level.INFO, "STARTED JSOUP PARSING");
+            final Document document = Jsoup.parse(loadedPage);
+
+            // process document
+
+            processDocument(document);
+
+            /*
+            WebClient webClient = new WebClient(BrowserVersion.CHROME);
             webClient.getOptions().setJavaScriptEnabled(true);
-            webClient.getOptions().setCssEnabled(false);
+            webClient.getOptions().setCssEnabled(true);
             webClient.getOptions().setUseInsecureSSL(true);
             webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+            webClient.getOptions().setThrowExceptionOnScriptError(false);
             webClient.getCookieManager().setCookiesEnabled(true);
+
             webClient.setAjaxController(new NicelyResynchronizingAjaxController());
             // Wait time
             webClient.waitForBackgroundJavaScript(15000);
@@ -121,11 +140,15 @@ public class SsgaScraper implements Scraper, Runnable {
 
             // process document
             processDocument(document);
+             */
+
         } catch (Exception ex) {
 
             // release the ScraperDataDispatcher thread if exception occurs.
             scraperFundDataState.setIsActive(false);
             ex.printStackTrace();
+        } finally{
+            driver.quit();
         }
     }
 

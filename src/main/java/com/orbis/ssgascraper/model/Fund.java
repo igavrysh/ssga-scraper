@@ -6,7 +6,6 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name = "fund")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,4 +26,8 @@ public class Fund {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "link")
+    private String link;
+
 }

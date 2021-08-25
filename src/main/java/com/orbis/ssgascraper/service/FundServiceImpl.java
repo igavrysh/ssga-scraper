@@ -5,7 +5,6 @@ import com.orbis.ssgascraper.repository.FundRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.logging.Logger;
 
 @Service
@@ -36,27 +35,19 @@ public class FundServiceImpl implements FundService {
         if (fundPersisted == null) {
             fundRepo.save(fund);
         } else {
-            fundPersisted.setName(fund.getName());
-            fundPersisted.setDescription(fund.getDescription());
-            fundPersisted.setDomicile(fund.getDomicile());
-            fundRepo.save(fund);
+            if (fund.getName() != null) {
+                fundPersisted.setName(fund.getName());
+            }
+            if (fund.getDescription() != null) {
+                fundPersisted.setDescription(fund.getDescription());
+            }
+            if (fund.getDomicile() != null) {
+                fundPersisted.setDomicile(fund.getDomicile());
+            }
+            if (fund.getLink() != null) {
+                fundPersisted.setLink(fund.getLink());
+            }
+            fundRepo.save(fundPersisted);
         }
-
-        /*
-        // find the event by title which will be unique
-        Query query = new Query();
-        query.addCriteria(Criteria.where(Constants.EVENTS_TITLE).is(event.getTitle()));
-
-        // prepare update object
-        Update update = new Update();
-        update.set(Constants.EVENTS_TITLE, event.getTitle());
-        update.set(Constants.EVENTS_WEBSITE, event.getWebsite());
-        update.set(Constants.EVENTS_START_DATE, event.getStartDate());
-        update.set(Constants.EVENTS_END_DATE, event.getEndDate());
-        update.set(Constants.EVENTS_LOCATION, event.getLocation());
-
-        // execute the query
-        mongoTemplate.upsert(query, update, Events.class);
-         */
     }
 }

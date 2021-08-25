@@ -11,4 +11,5 @@ public interface FundRepo extends JpaRepository<Fund, Long> {
     Optional<Fund> findByTicker(@Param("ticker") String ticker);
 
     Optional<Fund> findByName(@Param("name") String name);
+
 }
