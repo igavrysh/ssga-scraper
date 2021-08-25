@@ -29,4 +29,5 @@ public interface FundRepo extends JpaRepository<Fund, Long> {
     @Modifying
     @Query("update Fund f set f.link = :link where f.id = :id")
     void updateLink(@Param(value = "id") long id, @Param(value = "link") String link);
+
 }

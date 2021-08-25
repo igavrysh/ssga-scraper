@@ -1,14 +1,12 @@
 package com.orbis.ssgascraper.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import com.orbis.ssgascraper.model.Fund;
+import lombok.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @ToString
+@Builder
 public class FundDto {
 
     private String ticker;
@@ -20,5 +18,15 @@ public class FundDto {
     private String description;
 
     private String link;
+
+    public static FundDto fundDtoFromFund(Fund fund) {
+        return FundDto.builder()
+                .ticker(fund.getTicker())
+                .name(fund.getName())
+                .domicile(fund.getDomicile())
+                .description(fund.getDescription())
+                .link(fund.getLink())
+                .build();
+    }
 
 }
