@@ -35,19 +35,19 @@ public class FundServiceImpl implements FundService {
         if (fundPersisted == null) {
             fundRepo.save(fund);
         } else {
+            Long fundId = fundPersisted.getId();
             if (fund.getName() != null) {
-                fundPersisted.setName(fund.getName());
+                fundRepo.updateName(fundId, fund.getName());
             }
             if (fund.getDescription() != null) {
-                fundPersisted.setDescription(fund.getDescription());
+                fundRepo.updateDescription(fundId, fund.getDescription());
             }
             if (fund.getDomicile() != null) {
-                fundPersisted.setDomicile(fund.getDomicile());
+                fundRepo.updateDomicile(fundId, fund.getDomicile());
             }
             if (fund.getLink() != null) {
-                fundPersisted.setLink(fund.getLink());
+                fundRepo.updateLink(fundId, fund.getLink());
             }
-            fundRepo.save(fundPersisted);
         }
     }
 }

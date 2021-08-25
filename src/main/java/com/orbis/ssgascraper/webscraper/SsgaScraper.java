@@ -69,12 +69,14 @@ public class SsgaScraper implements Scraper, Runnable {
                 Element tickerEl = row.select("tr:nth-of-type(1) td.fundTicker a").first();
                 Element domicileEl = row.select("tr:nth-of-type(1) td.domicile div").first();
 
+                URL url = new URL(ScraperInfo.SSGA.URL);
+
                 if (nameEl != null && tickerEl != null && domicileEl != null) {
                     Fund fund = Fund.builder()
                             .name(nameEl.text())
                             .ticker(tickerEl.text())
                             .domicile(domicileEl.text())
-                            .link(nameEl.attr("href"))
+                            .link(url.getProtocol() + "://" + url.getHost() + nameEl.attr("href"))
                             .build();
                     scraperFundDataState.getDataQueue().add(fund);
                 } else {
@@ -107,40 +109,7 @@ public class SsgaScraper implements Scraper, Runnable {
             final Document document = Jsoup.parse(loadedPage);
 
             // process document
-
             processDocument(document);
-
-            /*
-            WebClient webClient = new WebClient(BrowserVersion.CHROME);
-            webClient.getOptions().setJavaScriptEnabled(true);
-            webClient.getOptions().setCssEnabled(true);
-            webClient.getOptions().setUseInsecureSSL(true);
-            webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-            webClient.getOptions().setThrowExceptionOnScriptError(false);
-            webClient.getCookieManager().setCookiesEnabled(true);
-
-            webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-            // Wait time
-            webClient.waitForBackgroundJavaScript(15000);
-            webClient.getOptions().setThrowExceptionOnScriptError(false);
-
-            URL url = new URL(ScraperInfo.SSGA.URL);
-            WebRequest requestSettings = new WebRequest(url, HttpMethod.GET);
-            HtmlPage page = webClient.getPage(requestSettings);
-            synchronized (page) {
-                try {
-                    page.wait(15000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // Jsoup is used to parse the HTML.
-            final Document document = Jsoup.parse(page.asXml());
-
-            // process document
-            processDocument(document);
-             */
 
         } catch (Exception ex) {
 

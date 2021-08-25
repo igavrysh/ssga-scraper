@@ -9,10 +9,16 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
-public class FundDTO {
+public class FundDto {
 
     private String ticker;
 
     private String name;
+
+    private String domicile;
+
+    private String description;
+
+    private String link;
 
 }

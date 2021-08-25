@@ -1,7 +1,7 @@
 package com.orbis.ssgascraper.controller;
 
 import com.orbis.ssgascraper.constants.Routes;
-import com.orbis.ssgascraper.dto.FundDTO;
+import com.orbis.ssgascraper.dto.FundDto;
 import com.orbis.ssgascraper.service.FundService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class FundsController {
 
     @GetMapping
     public ResponseEntity<?> getFunds() {
-        List<FundDTO> result = new ArrayList<>();
+        List<FundDto> result = new ArrayList<>();
         return ResponseEntity.ok(result);
     }
 }
