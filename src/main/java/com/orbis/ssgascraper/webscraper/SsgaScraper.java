@@ -4,7 +4,6 @@ import com.machinepublishers.jbrowserdriver.JBrowserDriver;
 import com.machinepublishers.jbrowserdriver.Settings;
 import com.machinepublishers.jbrowserdriver.Timezone;
 import com.orbis.ssgascraper.dto.FundDto;
-import com.orbis.ssgascraper.model.Fund;
 import com.orbis.ssgascraper.service.ServiceProvider;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -27,11 +26,11 @@ public class SsgaScraper implements Scraper, Runnable {
 
     private final static Logger LOGGER = Logger.getLogger(String.valueOf(SsgaScraper.class));
 
-    private final ScraperDataState<Fund> scraperFundDataState;
+    private final ScraperDataState<FundDto> scraperFundDataState;
 
     @Autowired
-    public SsgaScraper(ScraperStateManager<Fund> scraperStateManager,
-                       ScraperDataState<Fund> scraperFundDataState,
+    public SsgaScraper(ScraperStateManager<FundDto> scraperStateManager,
+                       ScraperDataState<FundDto> scraperFundDataState,
                        ServiceProvider serviceProvider) {
         this.scraperFundDataState = scraperFundDataState;
 
@@ -75,14 +74,14 @@ public class SsgaScraper implements Scraper, Runnable {
                 URL url = new URL(ScraperInfo.SSGA.URL);
 
                 if (nameEl != null && tickerEl != null && domicileEl != null) {
-                    Fund fund = Fund.builder()
+                    FundDto fundDto = FundDto.builder()
                             .name(nameEl.text())
                             .ticker(tickerEl.text())
                             .domicile(domicileEl.text())
                             .link(url.getProtocol() + "://" + url.getHost() + nameEl.attr("href"))
                             .build();
-                    scraperFundDataState.getDataQueue().add(fund);
-                    result.add(FundDto.fundDtoFromFund(fund));
+                    scraperFundDataState.getDataQueue().add(fundDto);
+                    result.add(fundDto);
                 } else {
                     LOGGER.log(Level.SEVERE,
                             String.format("SsgaScrapper failed to parse funds, name %s, ticker %s, domicile $s", nameEl, tickerEl, domicileEl));
@@ -104,7 +103,7 @@ public class SsgaScraper implements Scraper, Runnable {
      *
      * @param document: HTML document
      */
-    private void processFundDocument(Document document) {
+    private void processFundDocument(Document document, FundDto fundDto) {
         LOGGER.log(Level.INFO, "Started Processing SsgaScraper Fund document");
 
         // make this active as we are continuously scraping
@@ -114,13 +113,16 @@ public class SsgaScraper implements Scraper, Runnable {
 
         if (fundContentEl != null) {
             Element fundDesc = fundContentEl.select("div.content ul").first();
-            int t = 1;
+            if (fundDesc != null) {
+                fundDto.setDescription(fundDesc.outerHtml());
+                scraperFundDataState.getDataQueue().add(fundDto);
+            }
         }
 
         // reset the status to false in order to release the ScraperDataDispatcher thread
         // which is used to insert data in the database.
         scraperFundDataState.setIsActive(false);
-        LOGGER.log(Level.INFO, "Finished Processing SsgaScraper Fund ocument");
+        LOGGER.log(Level.INFO, "Finished Processing SsgaScraper Fund document");
     }
 
 
@@ -133,7 +135,7 @@ public class SsgaScraper implements Scraper, Runnable {
     }
 
     private void startFundDetailsScraper(List<FundDto> funds) {
-        funds.parallelStream().forEach(f -> {
+        funds.forEach(f -> {
             JBrowserDriver driver = this.buildDriver();
             try {
                 LOGGER.log(Level.INFO, "Driver for fund details creating successful");
@@ -143,10 +145,9 @@ public class SsgaScraper implements Scraper, Runnable {
                 final Document document = Jsoup.parse(loadedPage);
 
                 // process Fund document
-                processFundDocument(document);
+                processFundDocument(document, f);
 
             } catch (Exception ex) {
-
                 // release the ScraperDataDispatcher thread if exception occurs.
                 scraperFundDataState.setIsActive(false);
                 ex.printStackTrace();
@@ -172,7 +173,6 @@ public class SsgaScraper implements Scraper, Runnable {
             // start scrapping for fund details
             startFundDetailsScraper(funds);
         } catch (Exception ex) {
-
             // release the ScraperDataDispatcher thread if exception occurs.
             scraperFundDataState.setIsActive(false);
             ex.printStackTrace();

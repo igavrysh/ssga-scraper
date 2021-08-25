@@ -9,6 +9,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "fund")
 public class Fund {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,6 +26,7 @@ public class Fund {
     private String domicile;
 
     @Column(name = "description")
+    @Lob
     private String description;
 
     @Column(name = "link")

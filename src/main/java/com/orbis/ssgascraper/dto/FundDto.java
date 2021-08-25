@@ -19,13 +19,23 @@ public class FundDto {
 
     private String link;
 
-    public static FundDto fundDtoFromFund(Fund fund) {
+    public static FundDto fundDtoFromFund(Fund f) {
         return FundDto.builder()
-                .ticker(fund.getTicker())
-                .name(fund.getName())
-                .domicile(fund.getDomicile())
-                .description(fund.getDescription())
-                .link(fund.getLink())
+                .ticker(f.getTicker())
+                .name(f.getName())
+                .domicile(f.getDomicile())
+                .description(f.getDescription())
+                .link(f.getLink())
+                .build();
+    }
+
+    public static Fund fundFromFundDto(FundDto f) {
+        return Fund.builder()
+                .ticker(f.getTicker())
+                .name(f.getName())
+                .domicile(f.getDomicile())
+                .description(f.getDescription())
+                .link(f.getLink())
                 .build();
     }
 

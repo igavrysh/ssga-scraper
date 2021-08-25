@@ -1,5 +1,6 @@
 package com.orbis.ssgascraper.service;
 
+import com.orbis.ssgascraper.dto.FundDto;
 import com.orbis.ssgascraper.model.Fund;
 import com.orbis.ssgascraper.repository.FundRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,28 +26,28 @@ public class FundServiceImpl implements FundService {
      * @param data: Takes fund object to add in the collection.
      */
     public void upsert(Object data) {
-        Fund fund = (Fund) data;
+        FundDto f = (FundDto) data;
 
-        if (fund.getTicker() == null) {
+        if (f.getTicker() == null) {
             return;
         }
 
-        Fund fundPersisted = fundRepo.findByTicker(fund.getTicker()).orElse(null);
+        Fund fundPersisted = fundRepo.findByTicker(f.getTicker()).orElse(null);
         if (fundPersisted == null) {
-            fundRepo.save(fund);
+            fundRepo.save(FundDto.fundFromFundDto(f));
         } else {
             Long fundId = fundPersisted.getId();
-            if (fund.getName() != null) {
-                fundRepo.updateName(fundId, fund.getName());
+            if (f.getName() != null) {
+                fundRepo.updateName(fundId, f.getName());
             }
-            if (fund.getDescription() != null) {
-                fundRepo.updateDescription(fundId, fund.getDescription());
+            if (f.getDescription() != null) {
+                fundRepo.updateDescription(fundId, f.getDescription());
             }
-            if (fund.getDomicile() != null) {
-                fundRepo.updateDomicile(fundId, fund.getDomicile());
+            if (f.getDomicile() != null) {
+                fundRepo.updateDomicile(fundId, f.getDomicile());
             }
-            if (fund.getLink() != null) {
-                fundRepo.updateLink(fundId, fund.getLink());
+            if (f.getLink() != null) {
+                fundRepo.updateLink(fundId, f.getLink());
             }
         }
     }
