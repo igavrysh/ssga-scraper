@@ -127,11 +127,15 @@ public class SsgaScraper implements Scraper, Runnable {
 
 
     private JBrowserDriver buildDriver() {
-        return new JBrowserDriver(Settings.builder().timezone(Timezone.UTC)
+        return new JBrowserDriver(
+            Settings.builder()
+                .timezone(Timezone.UTC)
                 .maxConnections(200)
                 .socketTimeout(10000)
                 .connectionReqTimeout(10000)
-                .connectTimeout(10000).build());
+                .connectTimeout(10000)
+                .loggerLevel(Level.SEVERE)
+                .build());
     }
 
     private void startFundDetailsScraper(List<FundDto> funds) {
