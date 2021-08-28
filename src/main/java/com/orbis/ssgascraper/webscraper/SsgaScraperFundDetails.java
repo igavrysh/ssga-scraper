@@ -16,7 +16,7 @@ public class SsgaScraperFundDetails {
     JBrowserDriver driver = BrowserDriver.buildDriver();
     try {
       LOGGER.log(Level.INFO, "Driver creating successful");
-      driver.get(ScraperInfo.SSGA.URL);
+      driver.get(fundLink);
       String loadedPage = driver.getPageSource();
       LOGGER.log(Level.INFO, "STARTED JSOUP PARSING");
       final Document document = Jsoup.parse(loadedPage);
