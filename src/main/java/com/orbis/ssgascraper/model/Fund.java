@@ -1,5 +1,6 @@
 package com.orbis.ssgascraper.model;
 
+import java.util.Date;
 import lombok.*;
 
 import javax.persistence.*;
@@ -31,5 +32,13 @@ public class Fund {
 
     @Column(name = "link")
     private String link;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created")
+    private Date created;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "modified")
+    private Date modified;
 
 }
