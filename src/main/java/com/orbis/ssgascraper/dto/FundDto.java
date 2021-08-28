@@ -24,7 +24,7 @@ public class FundDto {
 
     private List<WeightDto> sectorWeights;
 
-    private List<WeightDto> holdingsWeights;
+    private List<WeightDto> holdingWeights;
 
     public static FundDto fundDtoFromFund(Fund f) {
         return FundDto.builder()

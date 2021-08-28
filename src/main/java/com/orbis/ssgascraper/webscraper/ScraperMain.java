@@ -28,7 +28,8 @@ public class ScraperMain {
           .stream()
           .map(f -> {
             return (Runnable) () -> {
-              FundDto fund = new SsgaScraperFundDetails().scrapFundsList(f.getLink(), f);
+              FundDto fund = new SsgaScraperFundDetails().scrapFundDetails(f.getLink(), f);
+
               updatedFunds.get().add(fund);
             };
           })
@@ -36,8 +37,6 @@ public class ScraperMain {
       ParallelRunner.executeTasksInParallel(fundListTasks);
 
       List<FundDto> result = updatedFunds.get();
-      int t = 1;
-
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
