@@ -1,5 +1,7 @@
 package com.orbis.ssgascraper.dto;
 
+import com.orbis.ssgascraper.enums.WeightType;
+import java.time.LocalDate;
 import java.util.Date;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,8 +18,7 @@ public class WeightDto {
 
   private String name;
 
-  private String type;
+  private WeightType type;
 
-  private Date data;
-
+  private LocalDate date;
 }

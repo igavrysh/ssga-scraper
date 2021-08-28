@@ -1,6 +1,7 @@
 package com.orbis.ssgascraper.dto;
 
 import com.orbis.ssgascraper.model.Fund;
+import java.util.List;
 import lombok.*;
 
 @Getter
@@ -18,6 +19,12 @@ public class FundDto {
     private String description;
 
     private String link;
+
+    private List<WeightDto> countryWeights;
+
+    private List<WeightDto> sectorWeights;
+
+    private List<WeightDto> holdingsWeights;
 
     public static FundDto fundDtoFromFund(Fund f) {
         return FundDto.builder()
