@@ -81,45 +81,35 @@ public class SsgaScraperFundDetails {
       return fundDto;
     }
     Element fundTopHoldingsEl = fundContentEl.select("div.fund-top-holdings").first();
-    if (fundTopHoldingsEl != null) {
-      Element asOfDateEl = fundContentEl
-          .select("div.fund-top-holdings h3 span.date")
-          .first();
-      LocalDate localDate = null;
-      if (asOfDateEl != null) {
-        String asOfDateString = asOfDateEl.text();
-        String dateString = StringUtils.substringAfter(asOfDateString, "as of ");
+    if (fundTopHoldingsEl == null) {
+      return fundDto;
+    }
 
-        DateTimeFormatter f = DateTimeFormatter.ofPattern( "MMM dd yyyy");
-        try {
-          localDate = LocalDate.parse(dateString, f);
-        } catch (DateTimeParseException e) {
-          LOGGER.log(Level.SEVERE, String.format("cannot parse date, %s", e));
-        }
+    Element asOfDateEl = fundContentEl.select("div.fund-top-holdings h3 span.date").first();
+    LocalDate localDate = parseDateFromElement(asOfDateEl);
+    if (localDate == null) {
+      return fundDto;
+    }
+
+    Elements rows = fundTopHoldingsEl.select("div.fund-top-holdings table.data-table tbody tr");
+    List<WeightDto> topHoldings = new ArrayList<>();
+    for (Element r: rows) {
+      Element nameEl = r.selectFirst("tr td.label[data-label=Name:]");
+      Element weightEl = r.selectFirst("tr td.weight[data-label=Weight:]");
+      Double weight = ParsePercentage.parse(weightEl);
+      String name = nameEl.text();
+      if (weight != null && name != null) {
+        WeightDto weightDto = WeightDto.builder()
+            .name(name)
+            .weight(weight)
+            .type(WeightType.HOLDING)
+            .date(localDate)
+            .build();
+        topHoldings.add(weightDto);
       }
-      if (localDate != null) {
-        Elements rows = fundTopHoldingsEl
-            .select("div.fund-top-holdings table.data-table tbody tr");
-        List<WeightDto> topHoldings = new ArrayList<>();
-        for (Element r: rows) {
-          Element nameEl = r.selectFirst("tr td.label[data-label=Name:]");
-          Element weightEl = r.selectFirst("tr td.weight[data-label=Weight:]");
-          Double weight = ParsePercentage.parse(weightEl);
-          String name = nameEl.text();
-          if (weight != null && name != null) {
-            WeightDto weightDto = WeightDto.builder()
-                .name(name)
-                .weight(weight)
-                .type(WeightType.HOLDING)
-                .date(localDate)
-                .build();
-            topHoldings.add(weightDto);
-          }
-        }
-        if (topHoldings.size() != 0) {
-          fundDto.setHoldingWeights(topHoldings);
-        }
-      }
+    }
+    if (topHoldings.size() != 0) {
+      fundDto.setHoldingWeights(topHoldings);
     }
     return fundDto;
   }

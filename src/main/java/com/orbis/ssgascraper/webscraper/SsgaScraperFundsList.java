@@ -14,12 +14,12 @@ import org.jsoup.nodes.Element;
 public class SsgaScraperFundsList {
   private final static Logger LOGGER = Logger.getLogger(String.valueOf(SsgaScraperFundsList.class));
 
-  public List<FundDto> scrapFundsList(String indexLink) {
+  public List<FundDto> scrapFundsList(URL indexUrl) {
     JBrowserDriver driver = BrowserDriver.buildDriver();
     try {
-      URL indexUrl = new URL(indexLink);
       LOGGER.log(Level.INFO, "Driver creating successful");
-      driver.get(indexLink);
+      driver.get(indexUrl.toString());
+      LOGGER.log(Level.INFO, "Driver getting page source");
       String loadedPage = driver.getPageSource();
       LOGGER.log(Level.INFO, "STARTED JSOUP PARSING");
       final Document document = Jsoup.parse(loadedPage);

@@ -2,6 +2,8 @@ package com.orbis.ssgascraper.webscraper;
 
 import com.orbis.ssgascraper.dto.FundDto;
 import com.orbis.ssgascraper.service.FundService;
+
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,10 +22,11 @@ public class ScraperMain {
 
   public void start() {
     try {
+      URL indexUrl = new URL(INDEX_LINK);
       AtomicReference<List<FundDto>> funds = new AtomicReference<>(new ArrayList<>());
       ParallelRunner
           .executeTasksInParallel(Arrays.asList(() -> {
-            funds.set(new SsgaScraperFundsList().scrapFundsList(INDEX_LINK));
+            funds.set(new SsgaScraperFundsList().scrapFundsList(indexUrl));
           })
       );
 
