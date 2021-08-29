@@ -26,24 +26,4 @@ public class FundDto {
 
     private List<WeightDto> holdingWeights;
 
-    public static FundDto fundDtoFromFund(Fund f) {
-        return FundDto.builder()
-                .ticker(f.getTicker())
-                .name(f.getName())
-                .domicile(f.getDomicile())
-                .description(f.getDescription())
-                .link(f.getLink())
-                .build();
-    }
-
-    public static Fund fundFromFundDto(FundDto f) {
-        return Fund.builder()
-                .ticker(f.getTicker())
-                .name(f.getName())
-                .domicile(f.getDomicile())
-                .description(f.getDescription())
-                .link(f.getLink())
-                .build();
-    }
-
 }

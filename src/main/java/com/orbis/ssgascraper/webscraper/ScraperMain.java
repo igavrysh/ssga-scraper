@@ -1,17 +1,22 @@
 package com.orbis.ssgascraper.webscraper;
 
 import com.orbis.ssgascraper.dto.FundDto;
+import com.orbis.ssgascraper.service.FundService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class ScraperMain {
 
   private static String INDEX_LINK = "https://www.ssga.com/us/en/individual/etfs/fund-finder";
+
+  private final FundService fundService;
 
   public void start() {
     try {
@@ -21,6 +26,12 @@ public class ScraperMain {
             funds.set(new SsgaScraperFundsList().scrapFundsList(INDEX_LINK));
           })
       );
+
+      ParallelRunner.executeTasksInParallel(Arrays.asList(() -> {
+        funds.get().forEach(f -> {
+          fundService.upsert(f);
+        });
+      }));
 
       AtomicReference<List<FundDto>> updatedFunds = new AtomicReference<>(new ArrayList<>());
       List<Runnable> fundListTasks = funds
@@ -37,6 +48,8 @@ public class ScraperMain {
       ParallelRunner.executeTasksInParallel(fundListTasks);
 
       List<FundDto> result = updatedFunds.get();
+
+      int t = 1;
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

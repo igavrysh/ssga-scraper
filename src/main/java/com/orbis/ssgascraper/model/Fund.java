@@ -2,6 +2,7 @@ package com.orbis.ssgascraper.model;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.UUID;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,7 +17,7 @@ public class Fund {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "fund_id")
-    private Long id;
+    private UUID id;
 
     @Column(name = "name")
     private String name;

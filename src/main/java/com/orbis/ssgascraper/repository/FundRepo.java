@@ -15,24 +15,4 @@ public interface FundRepo extends JpaRepository<Fund, Long> {
 
     Optional<Fund> findByName(@Param("name") String name);
 
-    @Modifying
-    @Query("update Fund f set f.name = :name where f.id = :id")
-    @Transactional
-    void updateName(@Param(value = "id") long id, @Param(value = "name") String name);
-
-    @Modifying
-    @Query("update Fund f set f.description = :description where f.id = :id")
-    @Transactional
-    void updateDescription(@Param(value = "id") long id, @Param(value = "description") String description);
-
-    @Modifying
-    @Query("update Fund f set f.domicile = :domicile where f.id = :id")
-    @Transactional
-    void updateDomicile(@Param(value = "id") long id, @Param(value = "domicile") String domicile);
-
-    @Modifying
-    @Query("update Fund f set f.link = :link where f.id = :id")
-    @Transactional
-    void updateLink(@Param(value = "id") long id, @Param(value = "link") String link);
-
 }
