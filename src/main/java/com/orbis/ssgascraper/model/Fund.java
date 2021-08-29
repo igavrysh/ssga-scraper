@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Table(name = "fund")
 public class Fund {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     @Column(name = "fund_id")
     private UUID id;
 
@@ -30,6 +30,7 @@ public class Fund {
     @Column(name = "description")
     @Lob
     private String description;
+    private val id: UUID = givenId ?: UUID.randomUUID()
 
     @Column(name = "link")
     private String link;
