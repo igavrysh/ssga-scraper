@@ -30,7 +30,6 @@ public class Fund {
     @Column(name = "description")
     @Lob
     private String description;
-    private val id: UUID = givenId ?: UUID.randomUUID()
 
     @Column(name = "link")
     private String link;
