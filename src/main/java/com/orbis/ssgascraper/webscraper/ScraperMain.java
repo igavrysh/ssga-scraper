@@ -23,19 +23,14 @@ public class ScraperMain {
   public void start() {
     try {
       URL indexUrl = new URL(INDEX_LINK);
-      AtomicReference<List<FundDto>> funds = new AtomicReference<>(new ArrayList<>());
-      ParallelRunner
-          .executeTasksInParallel(Arrays.asList(() -> {
-            funds.set(new SsgaScraperFundsList().scrapFundsList(indexUrl));
-          })
-      );
 
-      ParallelRunner.executeTasksInParallel(Arrays.asList(() -> {
-        funds.get().forEach(f -> {
-          fundService.upsert(f);
-        });
-      }));
+      List<FundDto> funds = new SsgaScraperFundsList().scrapFundsList(indexUrl);
 
+      funds.forEach(f -> {
+        fundService.upsert(f);
+      });
+
+      /*
       AtomicReference<List<FundDto>> updatedFunds = new AtomicReference<>(new ArrayList<>());
       List<Runnable> fundListTasks = funds
           .get()
@@ -51,7 +46,7 @@ public class ScraperMain {
       ParallelRunner.executeTasksInParallel(fundListTasks);
 
       List<FundDto> result = updatedFunds.get();
-
+*/
       int t = 1;
     } catch (Exception e) {
       throw new RuntimeException(e);

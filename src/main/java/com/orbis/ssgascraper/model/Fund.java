@@ -3,6 +3,7 @@ package com.orbis.ssgascraper.model;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -14,8 +15,12 @@ import javax.persistence.*;
 @Table(name = "fund")
 public class Fund {
     @Id
-    @GeneratedValue
-    @Column(name = "fund_id")
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(name = "fund_id", updatable = false, nullable = false)
     private UUID id;
 
     @Column(name = "name")
