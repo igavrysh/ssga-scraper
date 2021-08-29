@@ -130,47 +130,56 @@ public class SsgaScraperFundDetails {
       return fundDto;
     }
     Element fundSectorsEl = fundContentEl.select("div.fund-sector-breakdown").first();
-    if (fundSectorsEl != null) {
-      Element asOfDateEl = fundContentEl
-          .select("div.fund-sector-breakdown h4 span.date")
-          .first();
-      LocalDate localDate = null;
-      if (asOfDateEl != null) {
-        String asOfDateString = asOfDateEl.text();
-        String dateString = StringUtils.substringAfter(asOfDateString, "as of ");
+    if (fundSectorsEl == null) {
+      return fundDto;
+    }
 
-        DateTimeFormatter f = DateTimeFormatter.ofPattern( "MMM dd yyyy");
-        try {
-          localDate = LocalDate.parse(dateString, f);
-        } catch (DateTimeParseException e) {
-          LOGGER.log(Level.SEVERE, String.format("cannot parse date, %s", e));
-        }
-      }
-      if (localDate != null) {
-        Elements rows = fundSectorsEl
-            .select("div.fund-sector-breakdown table.data-table tbody tr");
-        List<WeightDto> sectors = new ArrayList<>();
-        for (Element r: rows) {
-          Element nameEl = r.selectFirst("tr td.label");
-          Element weightEl = r.selectFirst("tr td.data");
-          Double weight = ParsePercentage.parse(weightEl);
-          String name = nameEl.text();
-          if (weight != null && name != null) {
-            WeightDto weightDto = WeightDto.builder()
-                .name(name)
-                .weight(weight)
-                .type(WeightType.HOLDING)
-                .date(localDate)
-                .build();
-            sectors.add(weightDto);
-          }
-        }
-        if (sectors.size() != 0) {
-          fundDto.setSectorWeights(sectors);
-        }
+    Element asOfDateEl = fundContentEl.select("div.fund-sector-breakdown h4 span.date").first();
+
+    LocalDate localDate = parseDateFromElement(asOfDateEl);
+    if (localDate == null) {
+      return fundDto;
+    }
+
+    Elements rows = fundSectorsEl
+        .select("div.fund-sector-breakdown table.data-table tbody tr");
+    List<WeightDto> sectors = new ArrayList<>();
+    for (Element r: rows) {
+      Element nameEl = r.selectFirst("tr td.label");
+      Element weightEl = r.selectFirst("tr td.data");
+      Double weight = ParsePercentage.parse(weightEl);
+      String name = nameEl.text();
+      if (weight != null && name != null) {
+        WeightDto weightDto = WeightDto.builder()
+            .name(name)
+            .weight(weight)
+            .type(WeightType.SECTOR)
+            .date(localDate)
+            .build();
+        sectors.add(weightDto);
       }
     }
+    if (sectors.size() != 0) {
+      fundDto.setSectorWeights(sectors);
+    }
     return fundDto;
+  }
+
+  private LocalDate parseDateFromElement(Element asOfDateEl) {
+    LocalDate localDate = null;
+    if (asOfDateEl != null) {
+      String asOfDateString = asOfDateEl.text();
+      String dateString = StringUtils.substringAfter(asOfDateString, "as of ");
+
+      DateTimeFormatter f = DateTimeFormatter.ofPattern( "MMM dd yyyy");
+      try {
+        localDate = LocalDate.parse(dateString, f);
+      } catch (DateTimeParseException e) {
+        LOGGER.log(Level.SEVERE,
+            String.format("cannot parse date of element %s, error: %s", asOfDateEl, e));
+      }
+    }
+    return localDate;
   }
 
   private FundDto processGeographicalBreakdown(Document document, FundDto fundDto) {
@@ -178,46 +187,38 @@ public class SsgaScraperFundDetails {
     if (fundContentEl == null) {
       return fundDto;
     }
-    Element fundSectorsEl = fundContentEl.select("div.geographical-chart").first();
-    if (fundSectorsEl != null) {
-      Element asOfDateEl = fundContentEl
-          .select("div.main-content div.fund-data span.date")
-          .first();
-      LocalDate localDate = null;
-      if (asOfDateEl != null) {
-        String asOfDateString = asOfDateEl.text();
-        String dateString = StringUtils.substringAfter(asOfDateString, "as of ");
+    Element fundCountriesEl = fundContentEl.select("div.geographical-chart").first();
+    if (fundCountriesEl == null) {
+      return fundDto;
+    }
 
-        DateTimeFormatter f = DateTimeFormatter.ofPattern( "MMM dd yyyy");
-        try {
-          localDate = LocalDate.parse(dateString, f);
-        } catch (DateTimeParseException e) {
-          LOGGER.log(Level.SEVERE, String.format("cannot parse date, %s", e));
-        }
+    Element asOfDateEl = fundContentEl.select("div.main-content div.fund-data span.date").first();
+
+    LocalDate localDate = parseDateFromElement(asOfDateEl);
+    if (localDate == null) {
+      return fundDto;
+    }
+
+    Elements rows = fundCountriesEl
+        .select("div.main-content table.data-table tbody tr");
+    List<WeightDto> countries = new ArrayList<>();
+    for (Element r: rows) {
+      Element nameEl = r.selectFirst("tr td.label");
+      Element weightEl = r.selectFirst("tr td.data");
+      Double weight = ParsePercentage.parse(weightEl);
+      String name = nameEl.text();
+      if (weight != null && name != null) {
+        WeightDto weightDto = WeightDto.builder()
+            .name(name)
+            .weight(weight)
+            .type(WeightType.COUNTRY)
+            .date(localDate)
+            .build();
+        countries.add(weightDto);
       }
-      if (localDate != null) {
-        Elements rows = fundSectorsEl
-            .select("div.main-content table.data-table tbody tr");
-        List<WeightDto> countries = new ArrayList<>();
-        for (Element r: rows) {
-          Element nameEl = r.selectFirst("tr td.label");
-          Element weightEl = r.selectFirst("tr td.data");
-          Double weight = ParsePercentage.parse(weightEl);
-          String name = nameEl.text();
-          if (weight != null && name != null) {
-            WeightDto weightDto = WeightDto.builder()
-                .name(name)
-                .weight(weight)
-                .type(WeightType.HOLDING)
-                .date(localDate)
-                .build();
-            countries.add(weightDto);
-          }
-        }
-        if (countries.size() != 0) {
-          fundDto.setCountryWeights(countries);
-        }
-      }
+    }
+    if (countries.size() != 0) {
+      fundDto.setCountryWeights(countries);
     }
     return fundDto;
   }

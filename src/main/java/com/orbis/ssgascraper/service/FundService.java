@@ -4,6 +4,7 @@ import com.orbis.ssgascraper.dto.FundDto;
 import com.orbis.ssgascraper.model.Fund;
 import com.orbis.ssgascraper.repository.FundRepo;
 import com.orbis.ssgascraper.util.FundMapper;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +35,11 @@ public class FundService {
         Fund fundPersisted = fundRepo.findByTicker(fundDto.getTicker()).orElse(null);
         if (fundPersisted == null) {
             Fund fund = FundMapper.fundFromDto(fundDto);
+            fund.setCreated(LocalDateTime.now());
             fundRepo.save(fund);
         } else {
             FundMapper.updateFundFromDto(fundDto, fundPersisted);
+            fundPersisted.setModified(LocalDateTime.now());
             fundRepo.save(fundPersisted);
         }
     }

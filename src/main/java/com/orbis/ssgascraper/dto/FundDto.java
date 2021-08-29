@@ -1,6 +1,7 @@
 package com.orbis.ssgascraper.dto;
 
 import com.orbis.ssgascraper.model.Fund;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.*;
 

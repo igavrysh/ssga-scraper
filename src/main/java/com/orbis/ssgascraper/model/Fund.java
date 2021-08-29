@@ -1,7 +1,6 @@
 package com.orbis.ssgascraper.model;
 
-import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.*;
 
@@ -36,9 +35,9 @@ public class Fund {
     private String link;
 
     @Column(name = "created")
-    private LocalDate created;
+    private LocalDateTime created;
 
     @Column(name = "modified")
-    private LocalDate modified;
+    private LocalDateTime modified;
 
 }
