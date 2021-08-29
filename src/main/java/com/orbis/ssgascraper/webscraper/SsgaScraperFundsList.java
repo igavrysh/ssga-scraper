@@ -17,14 +17,15 @@ public class SsgaScraperFundsList {
   public List<FundDto> scrapFundsList(String indexLink) {
     JBrowserDriver driver = BrowserDriver.buildDriver();
     try {
+      URL indexUrl = new URL(indexLink);
       LOGGER.log(Level.INFO, "Driver creating successful");
-      driver.get(ScraperInfo.SSGA.URL);
+      driver.get(indexLink);
       String loadedPage = driver.getPageSource();
       LOGGER.log(Level.INFO, "STARTED JSOUP PARSING");
       final Document document = Jsoup.parse(loadedPage);
 
       // process document
-      List<FundDto> funds = processIndexDocument(document);
+      List<FundDto> funds = processIndexDocument(document, indexUrl);
 
       return funds;
     } catch (Exception ex) {
@@ -42,7 +43,7 @@ public class SsgaScraperFundsList {
    * @param document: HTML document
    * @return List of FundDTO entites
    */
-  private List<FundDto> processIndexDocument(Document document) {
+  private List<FundDto> processIndexDocument(Document document, URL indexURL) {
     LOGGER.log(Level.INFO, "Started Processing SsgaScraper Index document");
 
     List<FundDto> result = new ArrayList<>();
@@ -56,14 +57,14 @@ public class SsgaScraperFundsList {
         Element tickerEl = row.select("tr:nth-of-type(1) td.fundTicker a").first();
         Element domicileEl = row.select("tr:nth-of-type(1) td.domicile div").first();
 
-        URL url = new URL(ScraperInfo.SSGA.URL);
-
         if (nameEl != null && tickerEl != null && domicileEl != null) {
           FundDto fundDto = FundDto.builder()
               .name(nameEl.text())
               .ticker(tickerEl.text())
               .domicile(domicileEl.text())
-              .link(url.getProtocol() + "://" + url.getHost() + nameEl.attr("href"))
+              .link(indexURL.getProtocol()
+                  + "://" + indexURL.getHost()
+                  + nameEl.attr("href"))
               .build();
           result.add(fundDto);
         } else {

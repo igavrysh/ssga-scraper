@@ -1,6 +1,5 @@
 package com.orbis.ssgascraper;
 
-import com.orbis.ssgascraper.webscraper.ScraperEngine;
 import com.orbis.ssgascraper.webscraper.ScraperMain;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
