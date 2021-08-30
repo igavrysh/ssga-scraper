@@ -40,7 +40,7 @@ public class FundService {
             fundRepo.save(fund);
         } else if (funds.size() == 1) {
             Fund fundPersisted = funds.get(0);
-            ///FundMapper.updateFundFromDto(fundDto, fundPersisted);
+            FundMapper.updateFundFromDto(fundDto, fundPersisted);
             fundPersisted.setModified(LocalDateTime.now());
             fundRepo.save(fundPersisted);
         } else {

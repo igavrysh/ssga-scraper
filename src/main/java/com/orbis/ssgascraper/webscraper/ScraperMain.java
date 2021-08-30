@@ -30,15 +30,12 @@ public class ScraperMain {
         fundService.upsert(f);
       });
 
-      /*
       AtomicReference<List<FundDto>> updatedFunds = new AtomicReference<>(new ArrayList<>());
       List<Runnable> fundListTasks = funds
-          .get()
           .stream()
           .map(f -> {
             return (Runnable) () -> {
               FundDto fund = new SsgaScraperFundDetails().scrapFundDetails(f.getLink(), f);
-
               updatedFunds.get().add(fund);
             };
           })
@@ -46,8 +43,9 @@ public class ScraperMain {
       ParallelRunner.executeTasksInParallel(fundListTasks);
 
       List<FundDto> result = updatedFunds.get();
-*/
-      int t = 1;
+      funds.forEach(f -> {
+        fundService.upsert(f);
+      });
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
