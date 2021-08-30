@@ -42,10 +42,12 @@ public class ScraperMain {
           .collect(Collectors.toList());
       ParallelRunner.executeTasksInParallel(fundListTasks);
 
-      List<FundDto> result = updatedFunds.get();
+      List<FundDto> updatedFundsWithWeights = updatedFunds.get();
       funds.forEach(f -> {
         fundService.upsert(f);
       });
+
+
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
