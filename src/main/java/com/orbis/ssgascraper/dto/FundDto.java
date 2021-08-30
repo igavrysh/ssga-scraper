@@ -1,7 +1,6 @@
 package com.orbis.ssgascraper.dto;
 
-import com.orbis.ssgascraper.model.Fund;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
 
@@ -21,10 +20,10 @@ public class FundDto {
 
     private String link;
 
-    private List<WeightDto> countryWeights;
+    private List<WeightDto> countryWeights = new ArrayList<>();
 
-    private List<WeightDto> sectorWeights;
+    private List<WeightDto> sectorWeights = new ArrayList<>();
 
-    private List<WeightDto> holdingWeights;
+    private List<WeightDto> holdingWeights = new ArrayList<>();
 
 }

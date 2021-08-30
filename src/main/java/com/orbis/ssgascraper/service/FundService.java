@@ -35,7 +35,7 @@ public class FundService {
 
         List<Fund> funds = fundRepo.findByTickerEquals(fundDto.getTicker());
         if (funds.size() == 0) {
-            Fund fund = FundMapper.fundFromDto(fundDto);
+            Fund fund = new FundMapper().fundFromDto(fundDto);
             fund.setCreated(LocalDateTime.now());
             fundRepo.save(fund);
         } else if (funds.size() == 1) {

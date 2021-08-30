@@ -31,8 +31,14 @@ public class Weight {
 
     private LocalDate date;
 
+    private Double value;
+
     private LocalDateTime created;
 
     private LocalDateTime modified;
+
+    @ManyToOne
+    @JoinColumn(name = "fund_id")
+    private Fund fund;
 
 }

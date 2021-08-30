@@ -1,10 +1,10 @@
 package com.orbis.ssgascraper.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.orbis.ssgascraper.dto.WeightDto;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
@@ -39,12 +39,12 @@ public class Fund {
     private LocalDateTime modified;
 
     @OneToMany
-    private List<Weight> countryWeights;
+    private List<Weight> countryWeights = new ArrayList<>();
 
     @OneToMany
-    private List<Weight> sectorWeights;
+    private List<Weight> sectorWeights = new ArrayList<>();
 
     @OneToMany
-    private List<Weight> holdingWeights;
+    private List<Weight> holdingWeights = new ArrayList<>();
 
 }

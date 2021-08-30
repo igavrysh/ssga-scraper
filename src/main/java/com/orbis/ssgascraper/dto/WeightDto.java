@@ -21,4 +21,7 @@ public class WeightDto {
   private WeightType type;
 
   private LocalDate date;
+
+  private Double value;
+
 }
