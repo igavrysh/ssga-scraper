@@ -105,11 +105,22 @@ public class SsgaScraperFundDetails {
     for (Element r: rows) {
       Element nameEl = r.selectFirst("tr td.label[data-label=Name:]");
       Element weightEl = r.selectFirst("tr td.weight[data-label=Weight:]");
-      Double value = ParsePercentage.parse(weightEl);
-      String name = nameEl.text();
+      Element isinEl = r.selectFirst("tr td.weight[data-lable=ISIN:]");
+      Double value = null;
+      if (weightEl != null) {
+        ParsePercentage.parse(weightEl);
+      }
+      String name = null;
+      if (nameEl != null) {
+        name = nameEl.text();
+      }
+      String isin = null;
+      if (isinEl != null) {
+        isin = isinEl.text();
+      }
       if (value != null && name != null) {
         WeightDto weightDto = WeightDto.builder()
-            .name(name)
+            .name(name + (isin != null ? "ISIN: " + isin : ""))
             .value(value)
             .type(WeightType.HOLDING)
             .date(localDate)
