@@ -24,8 +24,6 @@ public class FundService {
 
     private final FundRepo fundRepo;
 
-    private final WeightService weightService;
-
     /**
      * This function update the fund if found else adds new fund in the collection.
      *
@@ -45,12 +43,6 @@ public class FundService {
         } else {
             FundTransformer.updateFundAtomicFieldsWithDto(fundPersisted, fundDto);
             fundPersisted.setModified(LocalDateTime.now());
-            if (fundDto.getCountryWeights() != null) {
-                List<Weight> newCountryWeights = fundDto.getCountryWeights().stream()
-                    .map(weightDto -> weightService.upsert(weightDto, fundPersisted))
-                    .collect(Collectors.toList());
-                fundPersisted.setCountryWeights(newCountryWeights);
-            }
             fundRepo.saveAndFlush(fundPersisted);
         }
 

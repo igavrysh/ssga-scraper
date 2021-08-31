@@ -22,7 +22,7 @@ public class SsgaScraperFundDetails {
 
   private final static Logger LOGGER = Logger.getLogger(String.valueOf(SsgaScraperFundsList.class));
 
-  public FundDto scrapFundDetails(String fundLink, FundDto fund) {
+  public ScrapFundDetailsResult scrapFundDetails(String fundLink, FundDto fund) {
     JBrowserDriver driver = BrowserDriver.buildDriver();
     try {
       LOGGER.log(Level.INFO, "Driver creating successful");
@@ -33,7 +33,11 @@ public class SsgaScraperFundDetails {
 
       // process document
       FundDto updatedFund = processFundDocument(document, fund);
-      return updatedFund;
+      List<WeightDto> updatedWeights = processFundWeights(document, fund);
+      return ScrapFundDetailsResult.builder()
+          .fund(updatedFund)
+          .weights(updatedWeights)
+          .build();
     } catch (Exception ex) {
       // release the ScraperDataDispatcher thread if exception occurs.
       ex.printStackTrace();
@@ -52,11 +56,16 @@ public class SsgaScraperFundDetails {
     LOGGER.log(Level.INFO, "Started Processing SsgaScraper Fund document");
 
     fundDto = processDescription(document, fundDto);
-    fundDto = processTopHoldings(document, fundDto);
-    fundDto = processSectorAllocation(document, fundDto);
-    fundDto = processGeographicalBreakdown(document, fundDto);
     LOGGER.log(Level.INFO, "Finished Processing SsgaScraper Fund document");
     return fundDto;
+  }
+
+  private List<WeightDto> processFundWeights(Document document, FundDto fundDto) {
+    List<WeightDto> weights = new ArrayList<>();
+    weights.addAll(processTopHoldings(document, fundDto));
+    weights.addAll(processSectorAllocation(document, fundDto));
+    weights.addAll(processGeographicalBreakdown(document, fundDto));
+    return weights;
   }
 
   private Element fundContent(Document document) {
@@ -75,20 +84,20 @@ public class SsgaScraperFundDetails {
     return fundDto;
   }
 
-  private FundDto processTopHoldings(Document document, FundDto fundDto) {
+  private List<WeightDto> processTopHoldings(Document document, FundDto fundDto) {
     Element fundContentEl = fundContent(document);
     if (fundContentEl == null) {
-      return fundDto;
+      return new ArrayList<>();
     }
     Element fundTopHoldingsEl = fundContentEl.select("div.fund-top-holdings").first();
     if (fundTopHoldingsEl == null) {
-      return fundDto;
+      return new ArrayList<>();
     }
 
     Element asOfDateEl = fundContentEl.select("div.fund-top-holdings h3 span.date").first();
     LocalDate localDate = parseDateFromElement(asOfDateEl);
     if (localDate == null) {
-      return fundDto;
+      return new ArrayList<>();
     }
 
     Elements rows = fundTopHoldingsEl.select("div.fund-top-holdings table.data-table tbody tr");
@@ -104,31 +113,29 @@ public class SsgaScraperFundDetails {
             .value(value)
             .type(WeightType.HOLDING)
             .date(localDate)
+            .fund(fundDto)
             .build();
         topHoldings.add(weightDto);
       }
     }
-    if (topHoldings.size() != 0) {
-      //fundDto.setHoldingWeights(topHoldings);
-    }
-    return fundDto;
+    return topHoldings;
   }
 
-  private FundDto processSectorAllocation(Document document, FundDto fundDto) {
+  private List<WeightDto> processSectorAllocation(Document document, FundDto fundDto) {
     Element fundContentEl = fundContent(document);
     if (fundContentEl == null) {
-      return fundDto;
+      return new ArrayList<>();
     }
     Element fundSectorsEl = fundContentEl.select("div.fund-sector-breakdown").first();
     if (fundSectorsEl == null) {
-      return fundDto;
+      return new ArrayList<>();
     }
 
     Element asOfDateEl = fundContentEl.select("div.fund-sector-breakdown h4 span.date").first();
 
     LocalDate localDate = parseDateFromElement(asOfDateEl);
     if (localDate == null) {
-      return fundDto;
+      return new ArrayList<>();
     }
 
     Elements rows = fundSectorsEl
@@ -145,14 +152,51 @@ public class SsgaScraperFundDetails {
             .value(value)
             .type(WeightType.SECTOR)
             .date(localDate)
+            .fund(fundDto)
             .build();
         sectors.add(weightDto);
       }
     }
-    if (sectors.size() != 0) {
-      //fundDto.setSectorWeights(sectors);
+    return sectors;
+  }
+
+  private List<WeightDto> processGeographicalBreakdown(Document document, FundDto fundDto) {
+    Element fundContentEl = fundContent(document);
+    if (fundContentEl == null) {
+      return new ArrayList<>();
     }
-    return fundDto;
+    Element fundCountriesEl = fundContentEl.select("div.geographical-chart").first();
+    if (fundCountriesEl == null) {
+      return new ArrayList<>();
+    }
+
+    Element asOfDateEl = fundContentEl.select("div.main-content div.fund-data span.date").first();
+
+    LocalDate localDate = parseDateFromElement(asOfDateEl);
+    if (localDate == null) {
+      return new ArrayList<>();
+    }
+
+    Elements rows = fundCountriesEl
+        .select("div.main-content table.data-table tbody tr");
+    List<WeightDto> countries = new ArrayList<>();
+    for (Element r: rows) {
+      Element nameEl = r.selectFirst("tr td.label");
+      Element weightEl = r.selectFirst("tr td.data");
+      Double value = ParsePercentage.parse(weightEl);
+      String name = nameEl.text();
+      if (value != null && name != null) {
+        WeightDto weightDto = WeightDto.builder()
+            .name(name)
+            .value(value)
+            .type(WeightType.COUNTRY)
+            .date(localDate)
+            .fund(fundDto)
+            .build();
+        countries.add(weightDto);
+      }
+    }
+    return countries;
   }
 
   private LocalDate parseDateFromElement(Element asOfDateEl) {
@@ -170,47 +214,6 @@ public class SsgaScraperFundDetails {
       }
     }
     return localDate;
-  }
-
-  private FundDto processGeographicalBreakdown(Document document, FundDto fundDto) {
-    Element fundContentEl = fundContent(document);
-    if (fundContentEl == null) {
-      return fundDto;
-    }
-    Element fundCountriesEl = fundContentEl.select("div.geographical-chart").first();
-    if (fundCountriesEl == null) {
-      return fundDto;
-    }
-
-    Element asOfDateEl = fundContentEl.select("div.main-content div.fund-data span.date").first();
-
-    LocalDate localDate = parseDateFromElement(asOfDateEl);
-    if (localDate == null) {
-      return fundDto;
-    }
-
-    Elements rows = fundCountriesEl
-        .select("div.main-content table.data-table tbody tr");
-    List<WeightDto> countries = new ArrayList<>();
-    for (Element r: rows) {
-      Element nameEl = r.selectFirst("tr td.label");
-      Element weightEl = r.selectFirst("tr td.data");
-      Double value = ParsePercentage.parse(weightEl);
-      String name = nameEl.text();
-      if (value != null && name != null) {
-        WeightDto weightDto = WeightDto.builder()
-            .name(name)
-            .value(value)
-            .type(WeightType.COUNTRY)
-            .date(localDate)
-            .build();
-        countries.add(weightDto);
-      }
-    }
-    if (countries.size() != 0) {
-      fundDto.setCountryWeights(countries);
-    }
-    return fundDto;
   }
 
 }

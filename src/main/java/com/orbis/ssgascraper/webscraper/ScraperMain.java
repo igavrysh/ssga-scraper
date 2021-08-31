@@ -3,9 +3,11 @@ package com.orbis.ssgascraper.webscraper;
 import com.google.common.collect.Lists;
 import com.orbis.ssgascraper.dto.FundDto;
 import com.orbis.ssgascraper.dto.WeightDto;
+import com.orbis.ssgascraper.enums.WeightType;
 import com.orbis.ssgascraper.model.Weight;
 import com.orbis.ssgascraper.service.FundService;
 
+import com.orbis.ssgascraper.service.WeightService;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,6 +26,8 @@ public class ScraperMain {
 
   private final FundService fundService;
 
+  private final WeightService weightService;
+
   public void start() {
     try {
       URL indexUrl = new URL(INDEX_LINK);
@@ -35,11 +39,10 @@ public class ScraperMain {
       });
 
       WeightDto[] cws = {
-          WeightDto.builder().name("Ukraine").date(LocalDate.now()).value(0.99).build(),
-          WeightDto.builder().name("US").date(LocalDate.now()).value(0.1).build()
+          WeightDto.builder().name("Ukraine").date(LocalDate.now()).value(0.99).type(WeightType.HOLDING).fund(funds.get(0)).build(),
+          WeightDto.builder().name("US").date(LocalDate.now()).value(0.1).type(WeightType.HOLDING).fund(funds.get(0)).build()
       };
 
-      funds.get(0).setCountryWeights(Arrays.asList(cws));
 /*
       WeightDto[] sws = {
           WeightDto.builder().name("IT").date(LocalDate.now()).value(0.99).build(),
@@ -49,8 +52,8 @@ public class ScraperMain {
 
       //funds.get(0).setCountryWeights(Arrays.asList(sws));
 
-      funds.forEach(f -> {
-        fundService.upsert(f);
+      Arrays.asList(cws).forEach(w -> {
+        weightService.upsert(w);
       });
 
 

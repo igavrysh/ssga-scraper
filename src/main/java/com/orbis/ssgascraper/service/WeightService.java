@@ -1,5 +1,6 @@
 package com.orbis.ssgascraper.service;
 
+import com.orbis.ssgascraper.dto.FundDto;
 import com.orbis.ssgascraper.dto.WeightDto;
 import com.orbis.ssgascraper.exception.DataModelIncorrectStateException;
 import com.orbis.ssgascraper.model.Fund;
@@ -22,11 +23,18 @@ public class WeightService {
 
   private final WeightRepo weightRepo;
 
+  private final FundService fundService;
+
   /**
    * This function update the Weight if found else adds new weight in the collection.
    *
    */
-  public Weight upsert(WeightDto weightDto, Fund fund) {
+  public Weight upsert(WeightDto weightDto) {
+    Fund fund = fundService.fundWithFundDto(weightDto.getFund());
+    if (fund == null) {
+      return null;
+    }
+
     Weight weightPersisted = weightWithDtoAndFund(weightDto, fund);
     if (weightPersisted == null) {
       Weight weight = WeightDtoTransformer.toModel(weightDto);

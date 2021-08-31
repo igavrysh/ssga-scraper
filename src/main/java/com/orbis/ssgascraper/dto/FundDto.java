@@ -20,6 +20,4 @@ public class FundDto {
 
     private String link;
 
-    private List<WeightDto> countryWeights = new ArrayList<>();
-
 }

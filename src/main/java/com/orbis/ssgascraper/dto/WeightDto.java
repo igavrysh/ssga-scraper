@@ -21,4 +21,6 @@ public class WeightDto {
 
   private Double value;
 
+  private FundDto fund;
+
 }

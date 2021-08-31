@@ -38,8 +38,4 @@ public class Fund {
 
     private LocalDateTime modified;
 
-    @OneToMany
-    private List<Weight> countryWeights = new ArrayList<>();
-
-
 }
