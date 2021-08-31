@@ -96,12 +96,12 @@ public class SsgaScraperFundDetails {
     for (Element r: rows) {
       Element nameEl = r.selectFirst("tr td.label[data-label=Name:]");
       Element weightEl = r.selectFirst("tr td.weight[data-label=Weight:]");
-      Double weight = ParsePercentage.parse(weightEl);
+      Double value = ParsePercentage.parse(weightEl);
       String name = nameEl.text();
-      if (weight != null && name != null) {
+      if (value != null && name != null) {
         WeightDto weightDto = WeightDto.builder()
             .name(name)
-            .weight(weight)
+            .value(value)
             .type(WeightType.HOLDING)
             .date(localDate)
             .build();
@@ -109,7 +109,7 @@ public class SsgaScraperFundDetails {
       }
     }
     if (topHoldings.size() != 0) {
-      fundDto.setHoldingWeights(topHoldings);
+      //fundDto.setHoldingWeights(topHoldings);
     }
     return fundDto;
   }
@@ -137,12 +137,12 @@ public class SsgaScraperFundDetails {
     for (Element r: rows) {
       Element nameEl = r.selectFirst("tr td.label");
       Element weightEl = r.selectFirst("tr td.data");
-      Double weight = ParsePercentage.parse(weightEl);
+      Double value = ParsePercentage.parse(weightEl);
       String name = nameEl.text();
-      if (weight != null && name != null) {
+      if (value != null && name != null) {
         WeightDto weightDto = WeightDto.builder()
             .name(name)
-            .weight(weight)
+            .value(value)
             .type(WeightType.SECTOR)
             .date(localDate)
             .build();
@@ -150,7 +150,7 @@ public class SsgaScraperFundDetails {
       }
     }
     if (sectors.size() != 0) {
-      fundDto.setSectorWeights(sectors);
+      //fundDto.setSectorWeights(sectors);
     }
     return fundDto;
   }
@@ -195,12 +195,12 @@ public class SsgaScraperFundDetails {
     for (Element r: rows) {
       Element nameEl = r.selectFirst("tr td.label");
       Element weightEl = r.selectFirst("tr td.data");
-      Double weight = ParsePercentage.parse(weightEl);
+      Double value = ParsePercentage.parse(weightEl);
       String name = nameEl.text();
-      if (weight != null && name != null) {
+      if (value != null && name != null) {
         WeightDto weightDto = WeightDto.builder()
             .name(name)
-            .weight(weight)
+            .value(value)
             .type(WeightType.COUNTRY)
             .date(localDate)
             .build();

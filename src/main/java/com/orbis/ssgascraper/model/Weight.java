@@ -41,4 +41,5 @@ public class Weight {
     @JoinColumn(name = "fund_id")
     private Fund fund;
 
+
 }

@@ -22,8 +22,4 @@ public class FundDto {
 
     private List<WeightDto> countryWeights = new ArrayList<>();
 
-    private List<WeightDto> sectorWeights = new ArrayList<>();
-
-    private List<WeightDto> holdingWeights = new ArrayList<>();
-
 }

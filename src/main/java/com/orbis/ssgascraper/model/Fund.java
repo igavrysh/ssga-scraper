@@ -41,10 +41,5 @@ public class Fund {
     @OneToMany
     private List<Weight> countryWeights = new ArrayList<>();
 
-    @OneToMany
-    private List<Weight> sectorWeights = new ArrayList<>();
-
-    @OneToMany
-    private List<Weight> holdingWeights = new ArrayList<>();
 
 }

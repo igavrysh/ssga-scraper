@@ -40,13 +40,14 @@ public class ScraperMain {
       };
 
       funds.get(0).setCountryWeights(Arrays.asList(cws));
-
+/*
       WeightDto[] sws = {
           WeightDto.builder().name("IT").date(LocalDate.now()).value(0.99).build(),
           WeightDto.builder().name("Manufacturing").date(LocalDate.now()).value(0.1).build()
       };
+      */
 
-      funds.get(0).setSectorWeights(Arrays.asList(sws));
+      //funds.get(0).setCountryWeights(Arrays.asList(sws));
 
       funds.forEach(f -> {
         fundService.upsert(f);
