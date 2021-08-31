@@ -1,17 +1,11 @@
 package com.orbis.ssgascraper.webscraper;
 
-import com.google.common.collect.Lists;
 import com.orbis.ssgascraper.dto.FundDto;
-import com.orbis.ssgascraper.dto.WeightDto;
-import com.orbis.ssgascraper.enums.WeightType;
-import com.orbis.ssgascraper.model.Weight;
 import com.orbis.ssgascraper.service.FundService;
 
 import com.orbis.ssgascraper.service.WeightService;
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -38,46 +32,27 @@ public class ScraperMain {
         fundService.upsert(f);
       });
 
-      WeightDto[] cws = {
-          WeightDto.builder().name("Ukraine").date(LocalDate.now()).value(0.99).type(WeightType.HOLDING).fund(funds.get(0)).build(),
-          WeightDto.builder().name("US").date(LocalDate.now()).value(0.1).type(WeightType.HOLDING).fund(funds.get(0)).build()
-      };
-
-/*
-      WeightDto[] sws = {
-          WeightDto.builder().name("IT").date(LocalDate.now()).value(0.99).build(),
-          WeightDto.builder().name("Manufacturing").date(LocalDate.now()).value(0.1).build()
-      };
-      */
-
-      //funds.get(0).setCountryWeights(Arrays.asList(sws));
-
-      Arrays.asList(cws).forEach(w -> {
-        weightService.upsert(w);
-      });
-
-
-      /*
-
-      AtomicReference<List<FundDto>> updatedFunds = new AtomicReference<>(new ArrayList<>());
+      AtomicReference<List<ScrapFundDetailsResult>> results
+          = new AtomicReference<>(new ArrayList<>());
       List<Runnable> fundListTasks = funds
           .stream()
           .map(f -> {
             return (Runnable) () -> {
-              FundDto fund = new SsgaScraperFundDetails().scrapFundDetails(f.getLink(), f);
-              updatedFunds.get().add(fund);
+              ScrapFundDetailsResult result = new SsgaScraperFundDetails()
+                  .scrapFundDetails(f.getLink(), f);
+              results.get().add(result);
             };
           })
           .collect(Collectors.toList());
       ParallelRunner.executeTasksInParallel(fundListTasks);
-      */
 
-      /*
-      List<FundDto> updatedFundsWithWeights = updatedFunds.get();
-      updatedFundsWithWeights.forEach(f -> {
-        fundService.upsert(f);
-      });*/
-
+      List<ScrapFundDetailsResult> updatedFundsWithWeights = results.get();
+      updatedFundsWithWeights.forEach(r -> {
+        fundService.upsert(r.getFund());
+        r.getWeights().forEach(w -> {
+          weightService.upsert(w);
+        });
+      });
 
     } catch (Exception e) {
       throw new RuntimeException(e);
