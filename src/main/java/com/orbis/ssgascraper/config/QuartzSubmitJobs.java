@@ -10,6 +10,7 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 
 @Configuration
 public class QuartzSubmitJobs {
+
   private static final String CRON_EVERY_FIVE_MINUTES = "0 0/5 * ? * * *";
 
   // Runs at minute 0 past hour 6 and 18

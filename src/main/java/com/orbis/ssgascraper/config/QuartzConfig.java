@@ -1,6 +1,7 @@
 package com.orbis.ssgascraper.config;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.lang3.ArrayUtils;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
@@ -15,9 +16,10 @@ import javax.sql.DataSource;
 import java.util.Calendar;
 import java.util.Properties;
 
-@Slf4j
 @Configuration
 public class QuartzConfig {
+
+  private final static Logger LOGGER = Logger.getLogger(String.valueOf(QuartzConfig.class));
 
   private ApplicationContext applicationContext;
   private DataSource dataSource;
@@ -58,8 +60,9 @@ public class QuartzConfig {
 
   static SimpleTriggerFactoryBean createTrigger(JobDetail jobDetail, long pollFrequencyMs,
       String triggerName) {
-    log.debug("createTrigger(jobDetail={}, pollFrequencyMs={}, triggerName={})",
-        jobDetail.toString(), pollFrequencyMs, triggerName);
+    LOGGER.log(Level.INFO,
+        String.format("createTrigger(jobDetail=%s, pollFrequencyMs=%s, triggerName=%s)",
+        jobDetail.toString(), pollFrequencyMs, triggerName));
 
     SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
     factoryBean.setJobDetail(jobDetail);
@@ -75,8 +78,9 @@ public class QuartzConfig {
 
   static CronTriggerFactoryBean createCronTrigger(JobDetail jobDetail, String cronExpression,
       String triggerName) {
-    log.debug("createCronTrigger(jobDetail={}, cronExpression={}, triggerName={})",
-        jobDetail.toString(), cronExpression, triggerName);
+    LOGGER.log(Level.INFO,
+        String.format("createCronTrigger(jobDetail={}, cronExpression={}, triggerName={})",
+            jobDetail.toString(), cronExpression, triggerName));
 
     // To fix a known issue with time-based cron jobs
     Calendar calendar = Calendar.getInstance();
@@ -95,7 +99,9 @@ public class QuartzConfig {
   }
 
   static JobDetailFactoryBean createJobDetail(Class jobClass, String jobName) {
-    log.debug("createJobDetail(jobClass={}, jobName={})", jobClass.getName(), jobName);
+    LOGGER.log(Level.INFO,
+        String.format("createJobDetail(jobClass={}, jobName={})",
+            jobClass.getName(), jobName));
 
     JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
     factoryBean.setName(jobName);
