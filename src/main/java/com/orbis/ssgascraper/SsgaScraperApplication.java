@@ -12,8 +12,7 @@ public class SsgaScraperApplication {
 
 		ConfigurableApplicationContext context =  SpringApplication.run(SsgaScraperApplication.class, args);
 
-		context.getBean(ScraperMain.class).start();
-
+		//context.getBean(ScraperMain.class).start();
 	}
 
 }
