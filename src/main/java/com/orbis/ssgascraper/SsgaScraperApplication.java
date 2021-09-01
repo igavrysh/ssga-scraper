@@ -24,7 +24,6 @@ public class SsgaScraperApplication {
 		//context.getBean(ScraperMain.class).start();
 	}
 
-
 	@Bean
 	BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -33,27 +32,30 @@ public class SsgaScraperApplication {
 	@Bean
 	CommandLineRunner run(UserService userService) {
 		return args -> {
-			userService.saveRole(new Role(null, "ROLE_USER"));
-			userService.saveRole(new Role(null, "ROLE_MANAGER"));
-			userService.saveRole(new Role(null, "ROLE_ADMIN"));
-			userService.saveRole(new Role(null, "ROLE_SUPER_ADMIN"));
+			String roleUser = "ROLE_USER";
+			if (userService.getRole(roleUser) == null) {
+				userService.saveRole(new Role(null, roleUser));
+			}
 
-			userService.saveUser(new User(null, "John Travolta", "john", "123",
-					new ArrayList<>()));
-			userService.saveUser(new User(null, "Will Smith", "will", "123",
-					new ArrayList<>()));
-			userService.saveUser(new User(null, "Jim Carry", "jim", "123",
-					new ArrayList<>()));
-			userService.saveUser(new User(null, "Arnold Schwarzenegger", "arnold", "123",
-					new ArrayList<>()));
+			String roleAdmin = "ROLE_ADMIN";
+			if (userService.getRole(roleAdmin) == null) {
+				userService.saveRole(new Role(null, roleAdmin));
+			}
 
-			userService.addRoleToUser("john", "ROLE_USER");
-			userService.addRoleToUser("john", "ROLE_MANAGER");
-			userService.addRoleToUser("will", "ROLE_MANAGER");
-			userService.addRoleToUser("jim", "ROLE_ADMIN");
-			userService.addRoleToUser("arnold", "ROLE_SUPER_ADMIN");
-			userService.addRoleToUser("arnold", "ROLE_ADMIN");
-			userService.addRoleToUser("arnold", "ROLE_USER");
+			String johnName = "john";
+			if (userService.getUser(johnName) == null) {
+				userService.saveUser(new User(null, "John Travolta", johnName, "123",
+						new ArrayList<>()));
+				userService.addRoleToUser("john", "ROLE_USER");
+				userService.addRoleToUser("john", "ROLE_MANAGER");
+			}
+
+			String willName = "will";
+			if (userService.getUser(willName) == null) {
+				userService.saveUser(new User(null, "Will Smith", "will", "123",
+						new ArrayList<>()));
+				userService.addRoleToUser("will", "ROLE_MANAGER");
+			}
 		};
 	}
 
