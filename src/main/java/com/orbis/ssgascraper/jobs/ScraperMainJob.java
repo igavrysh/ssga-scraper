@@ -9,16 +9,17 @@ import lombok.AllArgsConstructor;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 @DisallowConcurrentExecution
-@AllArgsConstructor
 public class ScraperMainJob implements Job {
 
-  private final static Logger LOGGER = Logger.getLogger(String.valueOf(QuartzConfig.class));
+  private final static Logger LOGGER = Logger.getLogger(String.valueOf(ScraperMainJob.class));
 
-  private final ScraperMain scraperMain;
+  @Autowired
+  private ScraperMain scraperMain;
 
   @Override
   public void execute(JobExecutionContext context) {

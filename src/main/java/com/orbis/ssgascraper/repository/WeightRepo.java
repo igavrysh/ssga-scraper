@@ -15,4 +15,6 @@ public interface WeightRepo extends JpaRepository<Weight, UUID> {
       @Param("name") String name, @Param("date") LocalDate date, @Param("type") WeightType type,
       @Param("fund") Fund fund);
 
+  List<Weight> findAllByTypeAndFund(@Param("type") WeightType type, @Param("fund") Fund fund);
+
 }

@@ -1,7 +1,5 @@
 package com.orbis.ssgascraper.dto;
 
-import java.util.ArrayList;
-import java.util.List;
 import lombok.*;
 
 @Getter

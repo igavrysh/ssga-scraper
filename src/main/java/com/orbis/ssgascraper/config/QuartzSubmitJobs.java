@@ -18,11 +18,11 @@ public class QuartzSubmitJobs {
 
   @Bean(name = "scraperMainJob123")
   public JobDetailFactoryBean jobScraperMain() {
-    return QuartzConfig.createJobDetail(ScraperMainJob.class, "Class Statistics Job");
+    return QuartzConfig.createJobDetail(ScraperMainJob.class, "Scrapper Main Job");
   }
 
   @Bean(name = "scraperMainTrigger")
   public CronTriggerFactoryBean triggerScraperMain(@Qualifier("scraperMainJob123") JobDetail jobDetail) {
-    return QuartzConfig.createCronTrigger(jobDetail, CRON_EVERY_FIVE_MINUTES, "Class Statistics Trigger");
+    return QuartzConfig.createCronTrigger(jobDetail, CRON_EVERY_FIVE_MINUTES, "Scrapper Main Trigger");
   }
 }

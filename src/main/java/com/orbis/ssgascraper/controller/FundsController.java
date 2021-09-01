@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
 @Api(value = "Supports GET operation", tags = {"Fund"})
 @RestController
 @RequestMapping(Routes.FUNDS_API)
@@ -31,3 +32,4 @@ public class FundsController {
         return ResponseEntity.ok(result);
     }
 }
+*/
