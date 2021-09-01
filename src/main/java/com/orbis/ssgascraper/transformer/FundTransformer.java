@@ -19,11 +19,20 @@ public class FundTransformer {
   }
 
   public static void updateFundAtomicFieldsWithDto(Fund fund, FundDto fundDto) {
-    fund.setName(fundDto.getName());
-    fund.setTicker(fundDto.getTicker());
-    fund.setDomicile(fundDto.getDomicile());
-    fund.setDescription(fundDto.getDescription());
-    fund.setLink(fundDto.getLink());
+    if (fund.getName() != null) {
+      fund.setName(fundDto.getName());
+    }
+    if (fund.getTicker() != null) {
+      fund.setTicker(fundDto.getTicker());
+    }
+    if (fund.getDomicile() != null) {
+      fund.setDomicile(fundDto.getDomicile());
+    }
+    if (fundDto.getDescription() != null) {
+      fund.setDescription(fundDto.getDescription());
+    }
+    if (fundDto.getLink() != null) {
+      fund.setLink(fundDto.getLink());
+    }
   }
-
 }

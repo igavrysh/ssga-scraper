@@ -49,6 +49,7 @@ public class ScraperMain {
       List<ScrapFundDetailsResult> updatedFundsWithWeights = results.get();
       updatedFundsWithWeights.forEach(r -> {
         fundService.upsert(r.getFund());
+
         r.getWeights().forEach(w -> {
           weightService.upsert(w);
         });
