@@ -24,8 +24,9 @@ public class SsgaScraperApplication {
 		//context.getBean(ScraperMain.class).start();
 	}
 
+
 	@Bean
-	PasswordEncoder passwordEncoder() {
+	BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
