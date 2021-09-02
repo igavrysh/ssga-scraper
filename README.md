@@ -1,4 +1,30 @@
-DEPLOYMENT INSTRUCTION
+# SSGA Scrapper Service
+
+Scraps some funds info from https://www.ssga.com portal. For more details check 
+`com.orbis.ssgascraper.ScraperMain` class.
+
+### Service Info
+Service is globally available by address
+```
+137.184.47.136:8080
+```
+
+### Main Endpoints
+
+* `POST 137.184.47.136:8080/api/login` - to get access token
+![api_login](api_login.png)
+  
+* `GET 137.184.47.136:8080/api/token/refresh` - to refresh token
+![api_token_refresh](api_token_refresh.png)
+  
+* `GET 137.184.47.136:8080/api/funds` - to get funds list
+![api_funds](api_funds.png)
+  
+* `GET 137.184.47.136:8080/api/fund/{TICKER}` - to get detailed info for 
+  fund with `TICKER` name
+![api_fun](api_fund.png)
+
+### Deployment & Mng Commands
 
 Step 1. Build the project with command:
 ```shell
