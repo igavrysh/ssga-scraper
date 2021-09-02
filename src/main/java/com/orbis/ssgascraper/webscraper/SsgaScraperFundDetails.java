@@ -106,14 +106,14 @@ public class SsgaScraperFundDetails {
       Element nameEl = r.selectFirst("tr td.label[data-label=Name:]");
       Element weightEl = r.selectFirst("tr td.weight[data-label=Weight:]");
       Element isinEl = r.selectFirst("tr td.weight[data-lable=ISIN:]");
+      if (nameEl == null || weightEl == null) {
+        continue;
+      }
+
       Double value = null;
-      if (weightEl != null) {
-        ParsePercentage.parse(weightEl);
-      }
+      value = ParsePercentage.parse(weightEl);
       String name = null;
-      if (nameEl != null) {
-        name = nameEl.text();
-      }
+      name = nameEl.text();
       String isin = null;
       if (isinEl != null) {
         isin = isinEl.text();
@@ -155,6 +155,9 @@ public class SsgaScraperFundDetails {
     for (Element r: rows) {
       Element nameEl = r.selectFirst("tr td.label");
       Element weightEl = r.selectFirst("tr td.data");
+      if (nameEl == null || weightEl == null) {
+        continue;
+      }
       Double value = ParsePercentage.parse(weightEl);
       String name = nameEl.text();
       if (value != null && name != null) {
@@ -194,6 +197,9 @@ public class SsgaScraperFundDetails {
     for (Element r: rows) {
       Element nameEl = r.selectFirst("tr td.label");
       Element weightEl = r.selectFirst("tr td.data");
+      if (nameEl == null || weightEl == null) {
+        continue;
+      }
       Double value = ParsePercentage.parse(weightEl);
       String name = nameEl.text();
       if (value != null && name != null) {
