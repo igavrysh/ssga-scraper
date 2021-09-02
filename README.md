@@ -61,7 +61,7 @@ Step 6. Create artifact dir and move compiled project there:
 mkdir /artifact
 ```
 
-Copy project
+Copy project:
 ```shell
 scp -i key/id_rsa demo/target/ssga-scraper-0.0.1-SNAPSHOT.jar root@<IP Address of the Droplet>:/artifact
 scp -i key/id_rsa ssga-scraper-spring-boot.service root@<IP Address of the Droplet>:/etc/systemd/system
@@ -85,17 +85,22 @@ To check server logs:
 journalctl -u ssga-scraper-spring-boot.service
 ```
 
-or 
+or:
 ```shell
 journalctl -u ssga-scraper-spring-boot.service --no-pager
 ```
 
-To restart service
+or :
+```shell
+journalctl -u ssga-scraper-spring-boot.service --e
+```
+
+To restart service:
 ```shell
 sudo systemctl restart ssga-scraper-spring-boot.service
 ```
 
-To reload config
+To reload config:
 ```shell
 systemctl daemon-reload
 ```
