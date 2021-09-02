@@ -3,7 +3,6 @@ package com.orbis.ssgascraper;
 import com.orbis.ssgascraper.model.Role;
 import com.orbis.ssgascraper.model.User;
 import com.orbis.ssgascraper.service.UserService;
-import com.orbis.ssgascraper.webscraper.ScraperMain;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

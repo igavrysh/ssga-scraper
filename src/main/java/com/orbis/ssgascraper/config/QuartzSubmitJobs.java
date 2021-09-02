@@ -11,7 +11,7 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 @Configuration
 public class QuartzSubmitJobs {
 
-  private static final String CRON_EVERY_FIVE_MINUTES = "0 0/5 * ? * * *";
+  private static final String CRON_EVERY_THIRTY_MINUTES = "0 0/30 * ? * * *";
 
   // Runs at minute 0 past hour 6 and 18
   private static final String CRON_TWICE_PER_DAY = "0 0 10,15/12 * * ?";
@@ -23,6 +23,6 @@ public class QuartzSubmitJobs {
 
   @Bean(name = "scraperMainTrigger")
   public CronTriggerFactoryBean triggerScraperMain(@Qualifier("scraperMainJob123") JobDetail jobDetail) {
-    return QuartzConfig.createCronTrigger(jobDetail, CRON_TWICE_PER_DAY, "Scrapper Main Trigger");
+    return QuartzConfig.createCronTrigger(jobDetail, CRON_EVERY_THIRTY_MINUTES, "Scrapper Main Trigger");
   }
 }
