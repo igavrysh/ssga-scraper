@@ -13,8 +13,8 @@ public class QuartzSubmitJobs {
 
   private static final String CRON_EVERY_N_MINUTES = "0 0/5 * ? * * *";
 
-  // Runs at minute 0 past hour 6 and 18
-  private static final String CRON_TWICE_PER_DAY = "0 0 10,15/12 * * ?";
+  // Runs at minute 0 past hour 7 and 15
+  private static final String CRON_TWICE_PER_DAY = "0 0 7,15/12 * * ?";
 
   @Bean(name = "scraperMainJob123")
   public JobDetailFactoryBean jobScraperMain() {
@@ -23,6 +23,6 @@ public class QuartzSubmitJobs {
 
   @Bean(name = "scraperMainTrigger")
   public CronTriggerFactoryBean triggerScraperMain(@Qualifier("scraperMainJob123") JobDetail jobDetail) {
-    return QuartzConfig.createCronTrigger(jobDetail, CRON_EVERY_N_MINUTES, "Scrapper Main Trigger");
+    return QuartzConfig.createCronTrigger(jobDetail, CRON_TWICE_PER_DAY, "Scrapper Main Trigger");
   }
 }

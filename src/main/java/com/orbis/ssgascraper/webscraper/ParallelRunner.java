@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutorService;
  * e.g. parsing separate fund details
  */
 public class ParallelRunner {
-  private static final int MAX_NUMBER_OF_THREADS = 5;
+  private static final int MAX_NUMBER_OF_THREADS = 2;
 
   private ExecutorService threadPool;
   private final List<Runnable> tasks;

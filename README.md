@@ -63,3 +63,13 @@ or
 ```shell
 journalctl -u ssga-scraper-spring-boot.service --no-pager
 ```
+
+To restart service
+```shell
+sudo systemctl restart ssga-scraper-spring-boot.service
+```
+
+To reload config
+```shell
+systemctl daemon-reload
+```

@@ -7,6 +7,6 @@ Type=simple
 Restart=always
 RestartSec=1
 User=root
-ExecStart=/usr/bin/java -jar /artifact/ssga-scraper-0.0.1-SNAPSHOT.jar
+ExecStart=/usr/bin/java -jar /artifact/ssga-scraper-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
 [Install]
 WantedBy=multi-user.target
