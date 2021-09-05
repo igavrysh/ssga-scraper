@@ -129,16 +129,6 @@
 			"response": []
 		}
 	],
-	"auth": {
-		"type": "bearer",
-		"bearer": [
-			{
-				"key": "token",
-				"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2huIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlzcyI6Imh0dHA6Ly8xMzcuMTg0LjQ3LjEzNjo4MDgwL2FwaS9sb2dpbiIsImV4cCI6MTYzMDU5MjQ5OX0.WmIs4wElSfensZ7qL1Jy86jy4FeciRMWvYw2UUpsf8o",
-				"type": "string"
-			}
-		]
-	},
 	"event": [
 		{
 			"listen": "prerequest",
